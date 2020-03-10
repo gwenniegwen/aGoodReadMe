@@ -7,6 +7,7 @@ const axios = require("axios");
 const writeFileAsync = util.promisify(fs.writeFile)
 
 function promptUser() {
+
     return inquirer.prompt([
 
         {
@@ -48,18 +49,18 @@ function promptUser() {
         {
             type: "input",
             name: "tests",
-            message:"What command should be run to run tests?"
+            message: "What command should be run to run tests?"
         },
 
         {
             type: "input",
             name: "walkthrough",
-            message:"What does the user need to know about using the repo?"
+            message: "What does the user need to know about using the repo?"
         },
         {
-            type:"input",
-            name:"contribute",
-            message:"What does the user need to know about contributing to the repo?"
+            type: "input",
+            name: "contribute",
+            message: "What does the user need to know about contributing to the repo?"
         },
 
 
@@ -68,50 +69,75 @@ function promptUser() {
         .then(function (userResponses) {
             const queryUrl = `https://api.github.com/users/${userResponses.username}`;
 
-           axios.get(queryUrl).then(function(response) {
-               console.log(response.data)
-           })
+            axios.get(queryUrl).then(function ({ data }) {
 
-           
-        
+                console.log(data)
 
-        const generateMarkDown = generateReadMe(userResponses);
-        
-     
-        writeFileAsync("readme.md", generateMarkDown)
-    })
-    
-    .catch(function(err) {
-        console.log(err);
-      });
-        
-    }
-        
-    function generateReadMe (userResponses){
-        return `#${userResponses.title}
-            ##${userResponses.description}
-            ##Table of Contents
-            *[installation]
-            *[usage]
-            *[license]
-            *[contributions]
-            *[tests]
-            *[questions]
-            ##Installation
-            ${userResponses.install}
-            ##Usage
-            ${userResponses.walkthrough}
-            ##License
-            ${userResponses.license}
-            ##Tests
-            ${userResponses.tests}
-            ##Questions`
-    }
+                const generateMarkDown = generateReadMe(userResponses)
+
+                function generateReadMe(userResponses) {
+                    return `
+# ${userResponses.title}
                 
-    //     var thestring = bigbadcode(userResponses)
-            
-    
+[![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)]
+(https://github.com/${data.login}/${userResponses.title})
+
+## Description
+${userResponses.description}
+
+## Table of Contents
+
+* [Installation](#installation)
+* [Usage](#usage)
+* [License](#license)
+* [Contributions](#contributions)
+* [Tests](#tests)
+* [Questions](#questions)
+
+## Installation
+To install necessary dependencies, run the following command: 
+${userResponses.install}
+
+## Usage
+${userResponses.walkthrough}
+
+## License
+This project is licensed under the ${userResponses.license} license.
+
+## Tests
+${userResponses.tests}
+
+## Questions
+![avatar](${data.avatar_url})
+If you have any questions about the repo, open an issue or contact 
+[${userResponses.username}](https://api.github.com/users/${userResponses.username}) 
+directly at [${data.email}]`
+                }
+
+                writeFileAsync("readme.md", generateMarkDown)
+
+            })
+
+
+        })
+
+        .then(function () {
+            console.log("Successfully wrote a readme");
+        })
+
+        .catch(function (err) {
+            console.log(err);
+        });
+
+}
+
+
+
+
+
 promptUser()
 
 
 
+// <img src=  "${data.avatar_url}"
+// alt="avatar" style="border-radius: 16px" width="30" />
