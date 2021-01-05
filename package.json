@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "dependencies": {
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "fs": "0.0.1-security",
     "html-to-markdown": "^1.0.0",
     "inquirer": "^7.0.6",
